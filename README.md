@@ -3,12 +3,15 @@
 ### General
 | Spec | Value | 
 | --------- | --------- | 
-| Product | MSBuildTasks | 
-| Version | v0.1 | 
-| Release Date | TBA | 
+| Product | DavidLievrouw.MSBuildTasks | 
+| Initial release date | TBA | 
 
-### Developer notes
-* TBA
+### Tasks
+* GetVersionParts
+  * This task accepts a Major.Minor.Build.Revision version number string, and splits it up into four integer properties. 
+  * More on this, later...
 
 ### Installation instructions
-* TBA
+* Get the latest version at [Nuget.org](https://www.nuget.org/packages/DavidLievrouw.MSBuildTasks/).
+* Install by executing:
+    PM> Install-Package DavidLievrouw.MSBuildTasks
