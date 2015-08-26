@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="UnitTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <RootPath>$(MSBuildProjectDirectory)\..</RootPath>
+    <SourceDirectory>$(RootPath)\src</SourceDirectory>
+	<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    <ResultsOutputPath>$(MSBuildProjectDirectory)\log</ResultsOutputPath>
+    <PackagesPath>$(MSBuildProjectDirectory)\packages</PackagesPath>
+    <MSBuildCommunityTasksPath>$(PackagesPath)\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
+	<NUnitPath>$(PackagesPath)\NUnit.Runners.2.6.4\tools</NUnitPath>
+	<VisualStudioVersion Condition="'$(VisualStudioVersion)'==''">14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
+   
+  <Target Name="Build">
+    <MSBuild 
+      Projects="$(SourceDirectory)\MSBuildTasks.Tests\MSBuildTasks.Tests.csproj;"
+	  Targets="Build"
+      Properties="Configuration=$(Configuration);VisualStudioVersion=$(VisualStudioVersion)"
+      StopOnFirstFailure="true"
+      ContinueOnError="false"
+      BuildInParallel="false" />
+  </Target>
+  
+  <Target Name="UnitTestNET" DependsOnTargets="Build">
+    <CreateItem Include="
+	              $(SourceDirectory)\MSBuildTasks.Tests\bin\$(Configuration)\DLMSBuildTasks.Tests.dll;">
+      <Output TaskParameter="Include" ItemName="NUnitTestAssemblies" />
+    </CreateItem>
+    
+	<NUnit
+      Assemblies="@(NUnitTestAssemblies)"
+      ToolPath="$(NUnitPath)"
+      Framework="net-4.5"
+      ContinueOnError="true"
+      OutputXmlFile="$(ResultsOutputPath)\nunit-unittests.xml" />
+    <Message Text="##teamcity[importData type='nunit' path='$(ResultsOutputPath)\nunit-unittests.xml']"/>
+  </Target>
+  
+  <Target Name="UnitTest" DependsOnTargets="UnitTestNET" />
+</Project>
