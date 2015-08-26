@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="RunTests" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="GetVersionParts" AssemblyFile="../DLMSBuildTasks.dll" />
+  
+  <Target Name="RunTests" DependsOnTargets="
+          HappyCase;
+          EmptyVersion;
+          DefaultVersion;" />
+  
+  <Target Name="HappyCase">
+    <PropertyGroup>
+	    <VersionNumber>12.2.1.31255</VersionNumber>
+	  </PropertyGroup>
+    <GetVersionParts VersionNumber="$(VersionNumber)">
+      <Output TaskParameter="MajorVersion" PropertyName="Major" />
+      <Output TaskParameter="MinorVersion" PropertyName="Minor" />
+      <Output TaskParameter="BuildVersion" PropertyName="Build" />
+      <Output TaskParameter="RevisionVersion" PropertyName="Revision" />
+    </GetVersionParts>
+	  <Message Text="$(VersionNumber) consists of $(Major)-$(Minor)-$(Build)-$(Revision)." />
+  </Target>
+    
+  <Target Name="EmptyVersion">
+    <PropertyGroup>
+	    <VersionNumber>0.0.0.0</VersionNumber>
+	  </PropertyGroup>
+    <GetVersionParts VersionNumber="$(VersionNumber)">
+      <Output TaskParameter="MajorVersion" PropertyName="Major" />
+      <Output TaskParameter="MinorVersion" PropertyName="Minor" />
+      <Output TaskParameter="BuildVersion" PropertyName="Build" />
+      <Output TaskParameter="RevisionVersion" PropertyName="Revision" />
+    </GetVersionParts>
+	  <Message Text="$(VersionNumber) consists of $(Major)-$(Minor)-$(Build)-$(Revision)." />
+  </Target>
+    
+  <Target Name="DefaultVersion">
+    <PropertyGroup>
+	    <VersionNumber>1.0.0.0</VersionNumber>
+	  </PropertyGroup>
+    <GetVersionParts VersionNumber="$(VersionNumber)">
+      <Output TaskParameter="MajorVersion" PropertyName="Major" />
+      <Output TaskParameter="MinorVersion" PropertyName="Minor" />
+      <Output TaskParameter="BuildVersion" PropertyName="Build" />
+      <Output TaskParameter="RevisionVersion" PropertyName="Revision" />
+    </GetVersionParts>
+	  <Message Text="$(VersionNumber) consists of $(Major)-$(Minor)-$(Build)-$(Revision)." />
+  </Target>
+
+</Project>
