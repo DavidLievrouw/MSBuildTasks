@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:ns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>DavidLievrouw.MSBuildTasks</id>
+    <version>0.9.0</version>
+    <authors>David Lievrouw</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Custom MSBuild tasks for web project deployment purposes.</description>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="target\MSBuildTasks\DLMSBuildTasks.*" target="lib\net46\" />
+  </files>
+</package>

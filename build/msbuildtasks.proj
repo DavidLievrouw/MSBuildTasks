@@ -25,14 +25,24 @@
 			 Targets="Deploy"
 			 BuildInParallel="false"/>
   </Target>
-  <Target Name="PublishNuGet">
+  <Target Name="PackNuGet">
     <MSBuild Projects="$(RestorePackagesScriptDirectory)\restorepackages.proj;"
 			 StopOnFirstFailure="true"
 			 Targets="RestoreCorePackagesOnly"
 			 BuildInParallel="false"/>
     <MSBuild Projects="$(InstallScriptDirectory)\nuget.proj;"
 			 StopOnFirstFailure="true"
-			 Targets="PackPush"
+			 Targets="Pack"
+			 BuildInParallel="false"/>
+  </Target>
+  <Target Name="PushNuGet">
+    <MSBuild Projects="$(RestorePackagesScriptDirectory)\restorepackages.proj;"
+			 StopOnFirstFailure="true"
+			 Targets="RestoreCorePackagesOnly"
+			 BuildInParallel="false"/>
+    <MSBuild Projects="$(InstallScriptDirectory)\nuget.proj;"
+			 StopOnFirstFailure="true"
+			 Targets="Push"
 			 BuildInParallel="false"/>
   </Target>
   <Target Name="UnitTest">
@@ -50,9 +60,9 @@
     <CallTarget Targets="Build" />
     <CallTarget Targets="Deploy" />
   </Target>
-  <Target Name="BuildDeployPublishNuGet">
+  <Target Name="BuildDeployPackNuGet">
     <CallTarget Targets="Build" />
     <CallTarget Targets="Deploy" />
-    <CallTarget Targets="PublishNuGet" />
+    <CallTarget Targets="PackNuGet" />
   </Target>
 </Project>
