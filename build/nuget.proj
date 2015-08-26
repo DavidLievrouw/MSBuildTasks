@@ -54,7 +54,7 @@
     <Exec Command='&quot;$(NuGetExe)&quot; pack &quot;$(MSBuildProjectDirectory)\DavidLievrouw.MSBuildTasks.nuspec&quot; -Version $(NuSpecVersion) -Symbols -NonInteractive -o &quot;$(DeploymentTargetDirectory)&quot;' />    
   </Target>
 
-  <Target Name="Push" DependsOnTargets="Pack">
+  <Target Name="Push" DependsOnTargets="InitVersion">
     <Exec Command='$(NuGetExe) push $(DeploymentTargetDirectory)\DavidLievrouw.MSBuildTasks.$(NuSpecVersion).nupkg' />
   </Target>
 </Project>

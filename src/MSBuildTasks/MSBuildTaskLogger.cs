@@ -7,7 +7,7 @@ namespace DavidLievrouw.MSBuildTasks {
     readonly TaskLoggingHelper _log;
 
     public MSBuildTaskLogger(Task task) {
-      if (task == null) throw new ArgumentNullException(nameof(task));
+      if (task == null) throw new ArgumentNullException("task");
       _log = task.Log;
     }
 

@@ -53,7 +53,7 @@ namespace DavidLievrouw.MSBuildTasks.GetVersionParts {
       }
       internal set {
         lock (Lock) {
-          if (value == null) throw new ArgumentNullException(nameof(value));
+          if (value == null) throw new ArgumentNullException("value");
           _logger = value;
         }
       }
