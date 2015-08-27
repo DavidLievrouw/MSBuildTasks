@@ -48,6 +48,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Crypto\DataProtector.cs" />
+    <Compile Include="Crypto\DataProtectorFactory.cs" />
+    <Compile Include="Crypto\EntropyCreator.cs" />
+    <Compile Include="Crypto\IDataProtector.cs" />
+    <Compile Include="Crypto\IDataProtectorFactory.cs" />
+    <Compile Include="Crypto\IEntropyCreator.cs" />
     <Compile Include="CustomTask.cs" />
     <Compile Include="DecryptForLocalMachineScope.cs" />
     <Compile Include="EncryptForLocalMachineScope.cs" />

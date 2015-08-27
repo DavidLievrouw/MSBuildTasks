@@ -3,9 +3,10 @@
   <PropertyGroup>
     <RootPath>$(MSBuildProjectDirectory)\..</RootPath>
     <SourceDirectory>$(RootPath)\src</SourceDirectory>
+    <BuildDirectory>$(RootPath)\build</BuildDirectory>
+	<ResultsOutputPath>$(BuildDirectory)\log</ResultsOutputPath>
+    <PackagesPath>$(BuildDirectory)\packages</PackagesPath>
 	<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
-    <ResultsOutputPath>$(MSBuildProjectDirectory)\log</ResultsOutputPath>
-    <PackagesPath>$(MSBuildProjectDirectory)\packages</PackagesPath>
     <MSBuildCommunityTasksPath>$(PackagesPath)\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
 	<NUnitPath>$(PackagesPath)\NUnit.Runners.2.6.4\tools</NUnitPath>
 	<VisualStudioVersion Condition="'$(VisualStudioVersion)'==''">14.0</VisualStudioVersion>

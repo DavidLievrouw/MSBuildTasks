@@ -2,15 +2,24 @@
 <Project DefaultTargets="IntegrationTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <RootPath>$(MSBuildProjectDirectory)\..</RootPath>
+    <SourceDirectory>$(RootPath)\src</SourceDirectory>
     <BuildDirectory>$(RootPath)\build</BuildDirectory>
+	<ResultsOutputPath>$(BuildDirectory)\log</ResultsOutputPath>
+    <PackagesPath>$(BuildDirectory)\packages</PackagesPath>
+	<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
+    <MSBuildCommunityTasksPath>$(PackagesPath)\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
+	<NUnitPath>$(PackagesPath)\NUnit.Runners.2.6.4\tools</NUnitPath>
+	<VisualStudioVersion Condition="'$(VisualStudioVersion)'==''">14.0</VisualStudioVersion>
 	<DLMSBuildTasksPath>$(BuildDirectory)\target\MSBuildTasks</DLMSBuildTasksPath>
   </PropertyGroup>
   <Import Project="$(DLMSBuildTasksPath)\DLMSBuildTasks.targets"/>
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
   
   <Target Name="IntegrationTest" DependsOnTargets="
 	GetVersionParts;
 	EncryptForLocalMachineScope;
-	DecryptForLocalMachineScope"/>
+	DecryptForLocalMachineScope;
+	RunIntegrationTests"/>
 	
   <Target Name="GetVersionParts">
     <PropertyGroup>
@@ -55,4 +64,30 @@
     <Message Text="$(Encrypted) decrypts to $(Decrypted)." />
   </Target>
   
+  <Target Name="Build">
+    <MSBuild 
+      Projects="$(SourceDirectory)\MSBuildTasks.IntegrationTests\MSBuildTasks.IntegrationTests.csproj;"
+	  Targets="Build"
+      Properties="Configuration=$(Configuration);VisualStudioVersion=$(VisualStudioVersion)"
+      StopOnFirstFailure="true"
+      ContinueOnError="false"
+      BuildInParallel="false" />
+  </Target>
+  
+  <Target Name="IntegrationTestNET" DependsOnTargets="Build">
+    <CreateItem Include="
+	              $(SourceDirectory)\MSBuildTasks.IntegrationTests\bin\$(Configuration)\DLMSBuildTasks.IntegrationTests.dll;">
+      <Output TaskParameter="Include" ItemName="NUnitTestAssemblies" />
+    </CreateItem>
+    
+	<NUnit
+      Assemblies="@(NUnitTestAssemblies)"
+      ToolPath="$(NUnitPath)"
+      Framework="net-4.5"
+      ContinueOnError="true"
+      OutputXmlFile="$(ResultsOutputPath)\nunit-integrationtests.xml" />
+    <Message Text="##teamcity[importData type='nunit' path='$(ResultsOutputPath)\nunit-integrationtests.xml']"/>
+  </Target>
+  
+  <Target Name="RunIntegrationTests" DependsOnTargets="IntegrationTestNET" />
 </Project>

@@ -1,27 +1,24 @@
 ﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
+using DavidLievrouw.MSBuildTasks.Crypto;
 using Microsoft.Build.Framework;
 
 namespace DavidLievrouw.MSBuildTasks {
   public class DecryptForLocalMachineScope : CustomTask {
-    static readonly byte[] UTF8Preamble = Encoding.UTF8.GetPreamble();
+    IEntropyCreator _entropyCreator;
+    IDataProtectorFactory _dataProtectorFactory;
+    static readonly object Lock = new object();
 
     public override bool Execute() {
       if (string.IsNullOrWhiteSpace(StringToDecrypt)) throw new InvalidOperationException("No valid input string is defined.");
 
       Logger.LogMessage(MessageImportance.High, "Decrypting: " + StringToDecrypt);
 
+      var entropy = EntropyCreator.CreateEntropy(Purposes);
+      var dataProtector = DataProtectorFactory.Create(entropy);
+      
       var cypher = Convert.FromBase64String(StringToDecrypt);
-      var purposes = Purposes == null
-        ? new string[] {}
-        : Purposes.Where(purpose => !string.IsNullOrWhiteSpace(purpose)).ToArray();
-      var entropyString = string.Join(";", purposes).Trim();
-      var entropy = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
-
-      var userData = ProtectedData.Unprotect(cypher, entropy, DataProtectionScope.LocalMachine);
-      userData = StripBOM(userData);
+      var userData = dataProtector.Unprotect(cypher);
 
       DecryptedString = Encoding.UTF8.GetString(userData);
 
@@ -38,12 +35,38 @@ namespace DavidLievrouw.MSBuildTasks {
 
     public string[] Purposes { get; set; }
 
-    static byte[] StripBOM(byte[] userData) {
-      if (userData == null) return null;
-      if (userData.Take(UTF8Preamble.Length).SequenceEqual(UTF8Preamble)) {
-        userData = userData.Skip(UTF8Preamble.Length).ToArray();
+    /// <remarks>
+    ///   Property injection, with a local default, is needed, because MSBuild requires a default constructor.
+    /// </remarks>
+    public IEntropyCreator EntropyCreator {
+      get {
+        lock (Lock) {
+          return _entropyCreator ?? (_entropyCreator = new EntropyCreator());
+        }
       }
-      return userData;
+      internal set {
+        lock (Lock) {
+          if (value == null) throw new ArgumentNullException("value");
+          _entropyCreator = value;
+        }
+      }
+    }
+
+    /// <remarks>
+    ///   Property injection, with a local default, is needed, because MSBuild requires a default constructor.
+    /// </remarks>
+    public IDataProtectorFactory DataProtectorFactory {
+      get {
+        lock (Lock) {
+          return _dataProtectorFactory ?? (_dataProtectorFactory = new DataProtectorFactory());
+        }
+      }
+      internal set {
+        lock (Lock) {
+          if (value == null) throw new ArgumentNullException("value");
+          _dataProtectorFactory = value;
+        }
+      }
     }
   }
 }

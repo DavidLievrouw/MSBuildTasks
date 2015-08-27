@@ -23,6 +23,13 @@
       * [Purposes] - An optional array of strings. These represent purposes for the data. The same purposes have to be passed to decrypt the data, later on. Empty, whitespace or null purposes are not used.
     * Output properties
       * [EncryptedString] - The BASE64 string that represents the encrypted data.
+* DecryptForLocalMachineScope
+  * This task decrypts the specified input string, that was encrypted on the local machine.
+    * Input properties
+      * [StringToDecrypt] - The BASE64 cypher to decrypt.
+      * [Purposes] - An optional array of strings. These represent purposes for the data. These should be the same purposes that were passed to encrypt the data, earlier. Empty, whitespace or null purposes are not used.
+    * Output properties
+      * [DecryptedString] - The original decrypted string.
 
 ### Installation instructions
 * Get the latest version at [Nuget.org](https://www.nuget.org/packages/DavidLievrouw.MSBuildTasks/).

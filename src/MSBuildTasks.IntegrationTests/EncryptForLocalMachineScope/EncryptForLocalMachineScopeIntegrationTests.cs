@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
+using System.Collections.Generic;
 using System.Text;
+using DavidLievrouw.MSBuildTasks.Crypto;
 using FakeItEasy;
-using Microsoft.Build.Framework;
 using NUnit.Framework;
 
 namespace DavidLievrouw.MSBuildTasks {
-  [TestFixture]
-  public class EncryptForLocalMachineScopeTests {
+  [TestFixture, Category("Integration")]
+  public class EncryptForLocalMachineScopeIntegrationTests {
     ITaskLogger _taskLogger;
     EncryptForLocalMachineScope _sut;
-    
+
     [SetUp]
     public void SetUp() {
       _sut = new EncryptForLocalMachineScope();
 
-      _taskLogger = _taskLogger.Fake();
+      _taskLogger = A.Fake<ITaskLogger>();
       _sut.Logger = _taskLogger;
     }
 
@@ -61,8 +60,8 @@ namespace DavidLievrouw.MSBuildTasks {
       _sut.Execute();
       var actual2 = _sut.EncryptedString;
 
-      var decryptedString1 = ManuallyDecrypt(actual1, "David;Lievrouw");
-      var decryptedString2 = ManuallyDecrypt(actual2, "David;Lievrouw");
+      var decryptedString1 = ManuallyDecrypt(actual1, new[] { "David", "Lievrouw" });
+      var decryptedString2 = ManuallyDecrypt(actual2, new[] { "David", "Lievrouw" });
 
       Assert.That(decryptedString1, Is.EqualTo(decryptedString2));
     }
@@ -88,28 +87,18 @@ namespace DavidLievrouw.MSBuildTasks {
       _sut.Execute();
       var actual = _sut.EncryptedString.Trim();
 
-      var decryptedString = ManuallyDecrypt(actual, "David;Lievrouw");
+      var decryptedString = ManuallyDecrypt(actual, new[] { "David", "Lievrouw" });
       Assert.That(decryptedString, Is.EqualTo(_sut.StringToEncrypt));
     }
 
-    [Test]
-    public void LogsOnStartAndEnd() {
-      _sut.StringToEncrypt = "The string to encrypt!";
-      _sut.Execute();
+    static string ManuallyDecrypt(string encryptedString, IEnumerable<string> purposes = null) {
+      var entropyCreator = new EntropyCreator();
+      var entropy = entropyCreator.CreateEntropy(purposes);
+      var protector = new DataProtector(entropy);
 
-      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypting: The string to encrypt!")).MustHaveHappened();
-      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypted successfully.")).MustHaveHappened();
-    }
-
-    static string ManuallyDecrypt(string encryptedString, string entropyString = null) {
       var cypher = Convert.FromBase64String(encryptedString);
-      entropyString = (entropyString ?? string.Empty).Trim();
-      var entropy = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
-      var userData = ProtectedData.Unprotect(cypher, entropy, DataProtectionScope.LocalMachine);
-      var bom = Encoding.UTF8.GetPreamble();
-      if (userData.Take(bom.Length).SequenceEqual(bom)) {
-        userData = userData.Skip(bom.Length).ToArray();
-      }
+      var userData = protector.Unprotect(cypher);
+
       return Encoding.UTF8.GetString(userData);
     }
   }
