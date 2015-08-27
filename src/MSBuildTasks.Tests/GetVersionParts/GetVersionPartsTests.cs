@@ -3,7 +3,7 @@ using FakeItEasy;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 
-namespace DavidLievrouw.MSBuildTasks.GetVersionParts {
+namespace DavidLievrouw.MSBuildTasks {
   [TestFixture]
   public class GetVersionPartsTests {
     ITaskLogger _taskLogger;

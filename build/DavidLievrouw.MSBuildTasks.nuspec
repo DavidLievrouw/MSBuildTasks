@@ -2,13 +2,15 @@
 <package xmlns:ns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>DavidLievrouw.MSBuildTasks</id>
-    <version>0.9.0-beta</version>
+    <version>0.9.0</version>
     <authors>David Lievrouw</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Custom MSBuild tasks for web project deployment purposes.</description>
     <dependencies />
   </metadata>
   <files>
-    <file src="target\MSBuildTasks\DLMSBuildTasks.*" target="lib\net451\" />
+    <file src="target\MSBuildTasks\DLMSBuildTasks.targets" target="tools\net451\" />
+    <file src="target\MSBuildTasks\DLMSBuildTasks.dll" target="tools\net451\" />
+    <file src="target\MSBuildTasks\DLMSBuildTasks.pdb" target="tools\net451\" />
   </files>
 </package>

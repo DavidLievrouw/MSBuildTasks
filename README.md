@@ -1,17 +1,47 @@
-# MSBuildTasks
+# DavidLievrouw.MSBuildTasks
 
 ### General
 | Spec | Value | 
 | --------- | --------- | 
-| Product | DavidLievrouw.MSBuildTasks | 
+| Package | DavidLievrouw.MSBuildTasks | 
 | Initial release date | TBA | 
 
 ### Tasks
 * GetVersionParts
   * This task accepts a Major.Minor.Build.Revision version number string, and splits it up into four integer properties. 
-  * More on this, later...
+    * Input properties
+      * [VersionNumber] - A valid version number string, that consists of (major).(minor).(build).(revision). Internally System.Version.Parse(string) is used to validate the input.
+    * Output properties
+      * [MajorVersion] - An integer that contains the Major version number.
+      * [MinorVersion] - An integer that contains the Minor version number.
+      * [BuildVersion] - An integer that contains the Build version number.
+      * [RevisionVersion] - An integer that contains the Revision version number.
 
 ### Installation instructions
 * Get the latest version at [Nuget.org](https://www.nuget.org/packages/DavidLievrouw.MSBuildTasks/).
 * Install by executing:
-    PM> Install-Package DavidLievrouw.MSBuildTasks
+```sh
+PM> Install-Package DavidLievrouw.MSBuildTasks
+```
+* Include the .targets file in your MSBuild scripts:
+```xml
+<Import Project="$(DLMSBuildTasksPath)\DLMSBuildTasks.targets"/>
+```
+* Use any of the included tasks in your MSBuild scripts, e.g.:
+```xml
+<Target Name="MyTarget">
+  <PropertyGroup>
+    <VersionNumber>12.2.1.31255</VersionNumber>
+  </PropertyGroup>
+  <GetVersionParts VersionNumber="$(VersionNumber)">
+    <Output TaskParameter="MajorVersion" PropertyName="Major" />
+    <Output TaskParameter="MinorVersion" PropertyName="Minor" />
+    <Output TaskParameter="BuildVersion" PropertyName="Build" />
+    <Output TaskParameter="RevisionVersion" PropertyName="Revision" />
+  </GetVersionParts>
+  <Message Text="$(VersionNumber) consists of $(Major)-$(Minor)-$(Build)-$(Revision)." />
+</Target>
+```
+
+### License
+MIT

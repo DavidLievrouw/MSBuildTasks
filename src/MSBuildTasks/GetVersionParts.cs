@@ -5,7 +5,7 @@ using Microsoft.Build.Utilities;
 
 [assembly: InternalsVisibleTo("DLMSBuildTasks.Tests")]
 
-namespace DavidLievrouw.MSBuildTasks.GetVersionParts {
+namespace DavidLievrouw.MSBuildTasks {
   public class GetVersionParts : Task {
     ITaskLogger _logger;
     static readonly object Lock = new object();

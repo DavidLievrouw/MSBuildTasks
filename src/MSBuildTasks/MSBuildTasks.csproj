@@ -47,9 +47,14 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="GetVersionParts\GetVersionParts.cs" />
+    <Compile Include="GetVersionParts.cs" />
     <Compile Include="ITaskLogger.cs" />
     <Compile Include="MSBuildTaskLogger.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DLMSBuildTasks.targets">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
