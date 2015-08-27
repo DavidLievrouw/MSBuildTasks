@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,6 +48,8 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CustomTask.cs" />
+    <Compile Include="EncryptForLocalMachineScope.cs" />
     <Compile Include="GetVersionParts.cs" />
     <Compile Include="ITaskLogger.cs" />
     <Compile Include="MSBuildTaskLogger.cs" />

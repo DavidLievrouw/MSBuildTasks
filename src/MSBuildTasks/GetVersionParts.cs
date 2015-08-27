@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
-
-[assembly: InternalsVisibleTo("DLMSBuildTasks.Tests")]
 
 namespace DavidLievrouw.MSBuildTasks {
-  public class GetVersionParts : Task {
-    ITaskLogger _logger;
-    static readonly object Lock = new object();
-
+  public class GetVersionParts : CustomTask {
     public override bool Execute() {
       if (string.IsNullOrWhiteSpace(VersionNumber)) throw new InvalidOperationException("No version number is defined.");
 
@@ -44,19 +37,5 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Output]
     public int RevisionVersion { get; set; }
-
-    public ITaskLogger Logger {
-      get {
-        lock (Lock) {
-          return _logger ?? (_logger = new MSBuildTaskLogger(this));
-        }
-      }
-      internal set {
-        lock (Lock) {
-          if (value == null) throw new ArgumentNullException("value");
-          _logger = value;
-        }
-      }
-    }
   }
 }
