@@ -9,7 +9,7 @@
   
   <Target Name="HappyCase">
     <PropertyGroup>
-      <StringToEncrypt>This is my string?!</StringToEncrypt>
+      <StringToEncrypt>This is my $µ£ string?!</StringToEncrypt>
     </PropertyGroup>
     <ItemGroup>
       <Purposes Include="David;Lievrouw;MSBuild;Tasks" />
@@ -26,7 +26,7 @@
 
   <Target Name="WithoutPurposes">
     <PropertyGroup>
-      <StringToEncrypt>This is my string?!</StringToEncrypt>
+      <StringToEncrypt>This is my $µ£ string?!</StringToEncrypt>
     </PropertyGroup>
     <EncryptForLocalMachineScope StringToEncrypt="$(StringToEncrypt)">
       <Output TaskParameter="EncryptedString" PropertyName="Encrypted" />

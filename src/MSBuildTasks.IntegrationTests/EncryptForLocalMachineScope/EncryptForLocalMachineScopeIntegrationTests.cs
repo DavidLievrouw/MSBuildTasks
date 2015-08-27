@@ -38,7 +38,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void GivenNoPurposes_EncryptsCorrectly() {
-      _sut.StringToEncrypt = "The string to encrypt!";
+      _sut.StringToEncrypt = "The string to encrypt! $µ£";
       _sut.Purposes = null;
 
       var result = _sut.Execute();
@@ -51,7 +51,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void IgnoresNullEmptyOrWhitespacePurposes() {
-      _sut.StringToEncrypt = "The string to encrypt!";
+      _sut.StringToEncrypt = "The string to encrypt! $µ£";
       _sut.Purposes = new[] {"David", null, "Lievrouw", string.Empty, " "};
       _sut.Execute();
       var actual1 = _sut.EncryptedString;
@@ -68,7 +68,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void GivenStringWithPurposes_Encrypts() {
-      _sut.StringToEncrypt = "The string to encrypt!";
+      _sut.StringToEncrypt = "The string to encrypt! $µ£";
       _sut.Purposes = new[] {"David", "Lievrouw"};
 
       var result = _sut.Execute();
@@ -81,7 +81,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void ProducesDecryptableString() {
-      _sut.StringToEncrypt = "The string to encrypt!";
+      _sut.StringToEncrypt = "The string to encrypt! $µ£";
       _sut.Purposes = new[] {"David", "Lievrouw"};
 
       _sut.Execute();

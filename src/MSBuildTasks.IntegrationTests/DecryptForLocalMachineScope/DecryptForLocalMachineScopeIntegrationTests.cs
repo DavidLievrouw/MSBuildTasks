@@ -38,7 +38,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void GivenNoPurposes_EncryptsCorrectly() {
-      const string expected = "The decrypted string!!";
+      const string expected = "The decrypted string!! $µ£";
       var encryptedString = ManuallyEncrypt(expected);
       _sut.StringToDecrypt = encryptedString;
       _sut.Purposes = null;
@@ -53,7 +53,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void IgnoresNullEmptyOrWhitespacePurposes() {
-      const string expected = "The decrypted string!!";
+      const string expected = "The decrypted string!! $µ£";
       var encryptedString = ManuallyEncrypt(expected, new[] { "David", "Lievrouw" });
       _sut.StringToDecrypt = encryptedString;
 
@@ -69,7 +69,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void GivenStringWithPurposes_Encrypts() {
-      const string expected = "The decrypted string!!";
+      const string expected = "The decrypted string!! $µ£";
       var encryptedString = ManuallyEncrypt(expected, new[] { "David", "Lievrouw" });
       _sut.StringToDecrypt = encryptedString;
       _sut.Purposes = new[] {"David", "Lievrouw"};
