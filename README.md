@@ -16,6 +16,13 @@
       * [MinorVersion] - An integer that contains the Minor version number.
       * [BuildVersion] - An integer that contains the Build version number.
       * [RevisionVersion] - An integer that contains the Revision version number.
+* EncryptForLocalMachineScope
+  * This task encrypts the specified input string, so that it can only be decrypted on the local machine.
+    * Input properties
+      * [StringToEncrypt] - The string to encrypt.
+      * [Purposes] - An optional array of strings. These represent purposes for the data. The same purposes have to be passed to decrypt the data, later on. Empty, whitespace or null purposes are not used.
+    * Output properties
+      * [EncryptedString] - The BASE64 string that represents the encrypted data.
 
 ### Installation instructions
 * Get the latest version at [Nuget.org](https://www.nuget.org/packages/DavidLievrouw.MSBuildTasks/).
