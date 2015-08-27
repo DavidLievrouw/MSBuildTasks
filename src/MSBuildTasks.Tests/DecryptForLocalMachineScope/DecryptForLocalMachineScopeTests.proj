@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="RunTests" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="EncryptForLocalMachineScope" AssemblyFile="../DLMSBuildTasks.dll" />
+  <UsingTask TaskName="DecryptForLocalMachineScope" AssemblyFile="../DLMSBuildTasks.dll" />
+  
+  <Target Name="RunTests" DependsOnTargets="
+          HappyCase;
+          WithoutPurposes;" />
+  
+  <Target Name="HappyCase">
+    <PropertyGroup>
+      <StringToEncrypt>This is my string?!</StringToEncrypt>
+    </PropertyGroup>
+    <ItemGroup>
+      <Purposes Include="David;Lievrouw;MSBuild;Tasks" />
+    </ItemGroup>
+    <EncryptForLocalMachineScope StringToEncrypt="$(StringToEncrypt)" Purposes="@(Purposes)">
+      <Output TaskParameter="EncryptedString" PropertyName="Encrypted" />
+    </EncryptForLocalMachineScope>
+    <Message Text="$(StringToEncrypt) encrypts to $(Encrypted)." />
+    <DecryptForLocalMachineScope StringtoDecrypt="$(Encrypted)" Purposes="@(Purposes)">
+      <Output TaskParameter="DecryptedString" PropertyName="Decrypted" />
+    </DecryptForLocalMachineScope>
+    <Message Text="$(Encrypted) decrypts to $(Decrypted)." />
+  </Target>
+
+  <Target Name="WithoutPurposes">
+    <PropertyGroup>
+      <StringToEncrypt>This is my string?!</StringToEncrypt>
+    </PropertyGroup>
+    <EncryptForLocalMachineScope StringToEncrypt="$(StringToEncrypt)">
+      <Output TaskParameter="EncryptedString" PropertyName="Encrypted" />
+    </EncryptForLocalMachineScope>
+    <Message Text="$(StringToEncrypt) encrypts to $(Encrypted)." />
+    <DecryptForLocalMachineScope StringtoDecrypt="$(Encrypted)">
+      <Output TaskParameter="DecryptedString" PropertyName="Decrypted" />
+    </DecryptForLocalMachineScope>
+    <Message Text="$(Encrypted) decrypts to $(Decrypted)." />
+  </Target>
+ 
+</Project>

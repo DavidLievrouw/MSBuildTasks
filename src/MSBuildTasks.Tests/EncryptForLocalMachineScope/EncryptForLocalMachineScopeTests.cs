@@ -97,15 +97,14 @@ namespace DavidLievrouw.MSBuildTasks {
       _sut.StringToEncrypt = "The string to encrypt!";
       _sut.Execute();
 
-      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypting by machine key: The string to encrypt!")).MustHaveHappened();
+      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypting: The string to encrypt!")).MustHaveHappened();
       A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypted successfully.")).MustHaveHappened();
     }
 
-    static string ManuallyDecrypt(string encryptedString, string entropyString) {
+    static string ManuallyDecrypt(string encryptedString, string entropyString = null) {
       var cypher = Convert.FromBase64String(encryptedString);
-      var entropy = entropyString == null
-        ? null
-        : Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
+      entropyString = (entropyString ?? string.Empty).Trim();
+      var entropy = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
       var userData = ProtectedData.Unprotect(cypher, entropy, DataProtectionScope.LocalMachine);
       var bom = Encoding.UTF8.GetPreamble();
       if (userData.Take(bom.Length).SequenceEqual(bom)) {

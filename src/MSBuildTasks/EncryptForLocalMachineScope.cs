@@ -9,13 +9,12 @@ namespace DavidLievrouw.MSBuildTasks {
     public override bool Execute() {
       if (string.IsNullOrWhiteSpace(StringToEncrypt)) throw new InvalidOperationException("No valid input string is defined.");
 
-      Logger.LogMessage(MessageImportance.High, "Encrypting by machine key: " + StringToEncrypt);
+      Logger.LogMessage(MessageImportance.High, "Encrypting: " + StringToEncrypt);
 
       var userData = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(StringToEncrypt)).ToArray();
       var purposes = Purposes == null
         ? new string[] {}
-        : Purposes.Where(purpose => !string.IsNullOrWhiteSpace(purpose)).ToArray()
-        ;
+        : Purposes.Where(purpose => !string.IsNullOrWhiteSpace(purpose)).ToArray();
       var entropyString = string.Join(";", purposes);
       var entropy = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
 

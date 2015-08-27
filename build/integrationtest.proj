@@ -9,7 +9,8 @@
   
   <Target Name="IntegrationTest" DependsOnTargets="
 	GetVersionParts;
-	EncryptForLocalMachineScope"/>
+	EncryptForLocalMachineScope;
+	DecryptForLocalMachineScope"/>
 	
   <Target Name="GetVersionParts">
     <PropertyGroup>
@@ -35,6 +36,23 @@
       <Output TaskParameter="EncryptedString" PropertyName="Encrypted" />
     </EncryptForLocalMachineScope>
     <Message Text="$(StringToEncrypt) encrypts to $(Encrypted)." />
+  </Target>
+  
+  <Target Name="DecryptForLocalMachineScope">
+    <PropertyGroup>
+      <StringToEncrypt>This is my string?!</StringToEncrypt>
+    </PropertyGroup>
+    <ItemGroup>
+      <Purposes Include="David;Lievrouw;MSBuild;Tasks" />
+    </ItemGroup>
+    <EncryptForLocalMachineScope StringToEncrypt="$(StringToEncrypt)" Purposes="@(Purposes)">
+      <Output TaskParameter="EncryptedString" PropertyName="Encrypted" />
+    </EncryptForLocalMachineScope>
+    <Message Text="$(StringToEncrypt) encrypts to $(Encrypted)." />
+    <DecryptForLocalMachineScope StringtoDecrypt="$(Encrypted)" Purposes="@(Purposes)">
+      <Output TaskParameter="DecryptedString" PropertyName="Decrypted" />
+    </DecryptForLocalMachineScope>
+    <Message Text="$(Encrypted) decrypts to $(Decrypted)." />
   </Target>
   
 </Project>

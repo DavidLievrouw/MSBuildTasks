@@ -7,4 +7,5 @@
 
   <UsingTask AssemblyFile="$(DLMSBuildTasksLib)" TaskName="DavidLievrouw.MSBuildTasks.GetVersionParts" />
   <UsingTask AssemblyFile="$(DLMSBuildTasksLib)" TaskName="DavidLievrouw.MSBuildTasks.EncryptForLocalMachineScope" />
+  <UsingTask AssemblyFile="$(DLMSBuildTasksLib)" TaskName="DavidLievrouw.MSBuildTasks.DecryptForLocalMachineScope" />
 </Project>
