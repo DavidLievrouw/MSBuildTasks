@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using DavidLievrouw.MSBuildTasks.Crypto;
 using FakeItEasy;
@@ -88,7 +87,7 @@ namespace DavidLievrouw.MSBuildTasks {
       var entropy = entropyCreator.CreateEntropy(purposes);
       var protector = new DataProtector(entropy);
 
-      var userData = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(stringtoEncrypt)).ToArray();
+      var userData = Encoding.UTF8.GetBytes(stringtoEncrypt);
       var cypher = protector.Protect(userData);
 
       return Convert.ToBase64String(cypher);

@@ -46,7 +46,7 @@ namespace DavidLievrouw.MSBuildTasks.Crypto {
     }
 
     static byte[] CalculateEntropyLocally(string entropyString) {
-      return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
+      return Encoding.UTF8.GetBytes(entropyString);
     }
   }
 }

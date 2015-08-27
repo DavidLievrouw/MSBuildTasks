@@ -55,7 +55,7 @@ namespace DavidLievrouw.MSBuildTasks {
 
       ConfigureDataProtectorCreator_ToReturn(entropy, _dataProtector);
 
-      var expectedUserData = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(_sut.StringToEncrypt)).ToArray();
+      var expectedUserData = Encoding.UTF8.GetBytes(_sut.StringToEncrypt);
       var expectedCypher = new byte[] {4, 5, 6, 7};
       ConfigureDataProtector_Protect_ToReturn(expectedUserData, expectedCypher);
 

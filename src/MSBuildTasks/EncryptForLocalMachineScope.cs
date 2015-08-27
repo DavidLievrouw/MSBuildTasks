@@ -18,7 +18,7 @@ namespace DavidLievrouw.MSBuildTasks {
       var entropy = EntropyCreator.CreateEntropy(Purposes);
       var dataProtector = DataProtectorFactory.Create(entropy);
 
-      var userData = Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(StringToEncrypt)).ToArray();
+      var userData = Encoding.UTF8.GetBytes(StringToEncrypt);
       var cypher = dataProtector.Protect(userData);
 
       EncryptedString = Convert.ToBase64String(cypher);

@@ -10,9 +10,7 @@ namespace DavidLievrouw.MSBuildTasks.Crypto {
         : purposes.Where(purpose => !string.IsNullOrWhiteSpace(purpose)).ToArray();
       var entropyString = string.Join(";", realPurposes).Trim();
 
-      return entropyString == string.Empty
-        ? new byte[] {}
-        : Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(entropyString)).ToArray();
+      return Encoding.UTF8.GetBytes(entropyString);
     }
   }
 }
