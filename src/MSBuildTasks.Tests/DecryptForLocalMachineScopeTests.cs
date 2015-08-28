@@ -2,6 +2,7 @@
 using System.Text;
 using DavidLievrouw.MSBuildTasks.Handlers;
 using DavidLievrouw.MSBuildTasks.Handlers.Models;
+using DavidLievrouw.Utils;
 using FakeItEasy;
 using FluentValidation;
 using Microsoft.Build.Framework;

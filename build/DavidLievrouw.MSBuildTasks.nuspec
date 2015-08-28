@@ -8,7 +8,7 @@
     <description>Custom MSBuild tasks for web project deployment purposes.</description>
     <dependencies>
       <group targetFramework="net451">
-        <dependency id="DavidLievrouw.Utils" version="1.0.0-beta" />
+        <dependency id="DavidLievrouw.Utils" version="1.0.0" />
         <dependency id="FluentValidation" version="5.6.2.0" />
       </group>
     </dependencies>

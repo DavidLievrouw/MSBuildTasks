@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DLUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DavidLievrouw.Utils.1.0.0-beta\lib\net451\DLUtils.dll</HintPath>
+      <HintPath>..\packages\DavidLievrouw.Utils.1.0.0\lib\net451\DLUtils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -62,8 +62,6 @@
     <Compile Include="GetVersionParts.cs" />
     <Compile Include="Handlers\DecryptForLocalMachineScopeQueryHandler.cs" />
     <Compile Include="Handlers\EncryptForLocalMachineScopeQueryHandler.cs" />
-    <Compile Include="Handlers\ICommandHandler.cs" />
-    <Compile Include="Handlers\IQueryHandler.cs" />
     <Compile Include="Handlers\Models\DecryptForLocalMachineScopeRequest.cs" />
     <Compile Include="Handlers\Models\EncryptForLocalMachineScopeRequest.cs" />
     <Compile Include="Handlers\Models\Validation\DecryptForLocalMachineScopeRequestValidator.cs" />

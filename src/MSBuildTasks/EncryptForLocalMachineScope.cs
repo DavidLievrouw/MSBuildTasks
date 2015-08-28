@@ -2,6 +2,7 @@
 using DavidLievrouw.MSBuildTasks.Handlers;
 using DavidLievrouw.MSBuildTasks.Handlers.Models;
 using DavidLievrouw.MSBuildTasks.Handlers.Models.Validation;
+using DavidLievrouw.Utils;
 using DavidLievrouw.Utils.Crypto;
 using Microsoft.Build.Framework;
 

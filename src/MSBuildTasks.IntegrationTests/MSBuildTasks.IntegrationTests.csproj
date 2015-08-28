@@ -35,7 +35,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="DLUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DavidLievrouw.Utils.1.0.0-beta\lib\net451\DLUtils.dll</HintPath>
+      <HintPath>..\packages\DavidLievrouw.Utils.1.0.0\lib\net451\DLUtils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FakeItEasy, Version=1.25.3.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">

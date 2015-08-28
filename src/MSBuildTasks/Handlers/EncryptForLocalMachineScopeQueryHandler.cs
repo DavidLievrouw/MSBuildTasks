@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DavidLievrouw.MSBuildTasks.Handlers.Models;
+using DavidLievrouw.Utils;
 using DavidLievrouw.Utils.Crypto;
 
 namespace DavidLievrouw.MSBuildTasks.Handlers {
