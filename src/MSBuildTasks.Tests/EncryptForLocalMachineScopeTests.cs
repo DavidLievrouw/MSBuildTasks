@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DavidLievrouw.MSBuildTasks.Crypto;
+using DavidLievrouw.Utils.Crypto;
 using FakeItEasy;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
@@ -11,9 +9,7 @@ namespace DavidLievrouw.MSBuildTasks {
   [TestFixture]
   public class EncryptForLocalMachineScopeTests {
     ITaskLogger _taskLogger;
-    IEntropyCreator _entropyCreator;
-    IDataProtector _dataProtector;
-    IDataProtectorFactory _dataProtectorFactory;
+    ILocalMachineScopeStringEncryptor _localMachineScopeStringEncryptor;
     EncryptForLocalMachineScope _sut;
 
     [SetUp]
@@ -22,11 +18,8 @@ namespace DavidLievrouw.MSBuildTasks {
 
       _taskLogger = _taskLogger.Fake();
       _sut.Logger = _taskLogger;
-      _entropyCreator = _entropyCreator.Fake();
-      _sut.EntropyCreator = _entropyCreator;
-      _dataProtectorFactory = _dataProtectorFactory.Fake();
-      _sut.DataProtectorFactory = _dataProtectorFactory;
-      _dataProtector = _dataProtector.Fake();
+      _localMachineScopeStringEncryptor = _localMachineScopeStringEncryptor.Fake();
+      _sut.LocalMachineScopeStringEncryptor = _localMachineScopeStringEncryptor;
     }
 
     [Test]
@@ -47,19 +40,12 @@ namespace DavidLievrouw.MSBuildTasks {
     }
 
     [Test]
-    public void ProtectsUserData_UsingEntropy() {
+    public void EncryptsUserData() {
       _sut.StringToEncrypt = "The string to encrypt!";
+      _sut.Purposes = new[] {"My", "Purposes"};
 
-      var entropy = new byte[] {1, 2, 3};
-      ConfigureEntropyCreator_ToReturn(entropy);
-
-      ConfigureDataProtectorCreator_ToReturn(entropy, _dataProtector);
-
-      var expectedUserData = Encoding.UTF8.GetBytes(_sut.StringToEncrypt);
-      var expectedCypher = new byte[] {4, 5, 6, 7};
-      ConfigureDataProtector_Protect_ToReturn(expectedUserData, expectedCypher);
-
-      var expectedResult = Convert.ToBase64String(expectedCypher);
+      const string expectedResult = "{EncryptedString}";
+      ConfigureLocalMachineScopeStringEncryptor_ToReturn(expectedResult);
 
       var result = _sut.Execute();
       var actual = _sut.EncryptedString;
@@ -67,12 +53,10 @@ namespace DavidLievrouw.MSBuildTasks {
       Assert.That(result, Is.True);
       Assert.That(actual, Is.Not.Null);
       Assert.That(actual, Is.EqualTo(expectedResult));
-      A.CallTo(() => _dataProtectorFactory.Create(A<byte[]>.That.IsSameSequenceAs(entropy)))
-        .MustHaveHappened();
-      A.CallTo(() => _dataProtector.Protect(A<byte[]>.That.IsSameSequenceAs(expectedUserData)))
-        .MustHaveHappened();
+      A.CallTo(() => _localMachineScopeStringEncryptor.Encrypt(_sut.StringToEncrypt, _sut.Purposes))
+       .MustHaveHappened();
     }
-  
+
     [Test]
     public void LogsOnStartAndEnd() {
       _sut.StringToEncrypt = "The string to encrypt!";
@@ -82,19 +66,9 @@ namespace DavidLievrouw.MSBuildTasks {
       A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypted successfully.")).MustHaveHappened();
     }
 
-    void ConfigureEntropyCreator_ToReturn(byte[] entropy) {
-      A.CallTo(() => _entropyCreator.CreateEntropy(A<IEnumerable<string>>._))
-       .Returns(entropy);
-    }
-
-    void ConfigureDataProtector_Protect_ToReturn(byte[] userData, byte[] cypher) {
-      A.CallTo(() => _dataProtector.Protect(A<byte[]>.That.IsSameSequenceAs(userData)))
-       .Returns(cypher);
-    }
-
-    void ConfigureDataProtectorCreator_ToReturn(byte[] entropy, IDataProtector dataProtector) {
-      A.CallTo(() => _dataProtectorFactory.Create(A<byte[]>.That.IsSameSequenceAs(entropy)))
-       .Returns(dataProtector);
+    void ConfigureLocalMachineScopeStringEncryptor_ToReturn(string result) {
+      A.CallTo(() => _localMachineScopeStringEncryptor.Encrypt(A<string>._, A<IEnumerable<string>>._))
+       .Returns(result);
     }
   }
 }

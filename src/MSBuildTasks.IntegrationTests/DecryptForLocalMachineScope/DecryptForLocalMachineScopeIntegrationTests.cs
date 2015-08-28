@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DavidLievrouw.MSBuildTasks.Crypto;
+using DavidLievrouw.Utils.Crypto;
 using FakeItEasy;
 using NUnit.Framework;
 

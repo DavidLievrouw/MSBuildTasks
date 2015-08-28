@@ -7,7 +7,7 @@
 	<MSBuildCommunityTasksPath>$(PackagesDirectory)\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
 	<Configuration Condition="'$(Configuration)'==''">Release</Configuration>
 	<ProductVersion>1.0.0</ProductVersion>
-	<BuildTargetDirectory>$(SourceDirectory)\InvoiceGen\obj\$(Configuration)\Package\PackageTmp</BuildTargetDirectory>
+	<BuildTargetDirectory>$(SourceDirectory)\MSBuildTasks\bin\$(Configuration)</BuildTargetDirectory>
 	<VisualStudioVersion Condition="'$(VisualStudioVersion)'==''">14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.targets"/>
