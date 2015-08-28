@@ -21,19 +21,19 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void WhenNoInputStringIsGiven_Throws() {
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.Throws<AggregateException>(() => _sut.Execute());
     }
 
     [Test]
     public void WhenEmptyInputStringIsGiven_Throws() {
       _sut.StringToEncrypt = string.Empty;
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.Throws<AggregateException>(() => _sut.Execute());
     }
 
     [Test]
-    public void WhenWhitespaceInputStringIsGiven_Throws() {
+    public void WhenWhitespaceInputStringIsGiven_DoesNotThrow() {
       _sut.StringToEncrypt = " ";
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.DoesNotThrow(() => _sut.Execute());
     }
 
     [Test]
@@ -60,8 +60,8 @@ namespace DavidLievrouw.MSBuildTasks {
       _sut.Execute();
       var actual2 = _sut.EncryptedString;
 
-      var decryptedString1 = ManuallyDecrypt(actual1, new[] { "David", "Lievrouw" });
-      var decryptedString2 = ManuallyDecrypt(actual2, new[] { "David", "Lievrouw" });
+      var decryptedString1 = ManuallyDecrypt(actual1, new[] {"David", "Lievrouw"});
+      var decryptedString2 = ManuallyDecrypt(actual2, new[] {"David", "Lievrouw"});
 
       Assert.That(decryptedString1, Is.EqualTo(decryptedString2));
     }
@@ -87,7 +87,7 @@ namespace DavidLievrouw.MSBuildTasks {
       _sut.Execute();
       var actual = _sut.EncryptedString.Trim();
 
-      var decryptedString = ManuallyDecrypt(actual, new[] { "David", "Lievrouw" });
+      var decryptedString = ManuallyDecrypt(actual, new[] {"David", "Lievrouw"});
       Assert.That(decryptedString, Is.EqualTo(_sut.StringToEncrypt));
     }
 

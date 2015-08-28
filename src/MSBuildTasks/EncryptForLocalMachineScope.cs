@@ -1,18 +1,22 @@
 ﻿using System;
-using System.Text;
+using DavidLievrouw.MSBuildTasks.Handlers;
+using DavidLievrouw.MSBuildTasks.Handlers.Models;
+using DavidLievrouw.MSBuildTasks.Handlers.Models.Validation;
 using DavidLievrouw.Utils.Crypto;
 using Microsoft.Build.Framework;
 
 namespace DavidLievrouw.MSBuildTasks {
   public class EncryptForLocalMachineScope : CustomTask {
-    ILocalMachineScopeStringEncryptor _localMachineScopeStringEncryptor;
+    IQueryHandler<EncryptForLocalMachineScopeRequest, string> _encryptForLocalMachineScopeQueryHandler;
     static readonly object Lock = new object();
 
     public override bool Execute() {
-      if (string.IsNullOrWhiteSpace(StringToEncrypt)) throw new InvalidOperationException("No valid input string is defined.");
-
-      Logger.LogMessage(MessageImportance.High, "Encrypting: " + StringToEncrypt);
-      EncryptedString = LocalMachineScopeStringEncryptor.Encrypt(StringToEncrypt, Purposes);
+      Logger.LogMessage(MessageImportance.High, "Encrypting: " + (StringToEncrypt ?? "[NULL]"));
+      EncryptedString = EncryptForLocalMachineScopeQueryHandler.Handle(
+        new EncryptForLocalMachineScopeRequest {
+          StringToEncrypt = StringToEncrypt,
+          Purposes = Purposes
+        }).Result;
       Logger.LogMessage(MessageImportance.High, "Encrypted successfully.");
 
       return true;
@@ -29,16 +33,20 @@ namespace DavidLievrouw.MSBuildTasks {
     /// <remarks>
     ///   Property injection, with a local default, is needed, because MSBuild requires a default constructor.
     /// </remarks>
-    public ILocalMachineScopeStringEncryptor LocalMachineScopeStringEncryptor {
+    public IQueryHandler<EncryptForLocalMachineScopeRequest, string> EncryptForLocalMachineScopeQueryHandler {
       get {
         lock (Lock) {
-          return _localMachineScopeStringEncryptor ?? (_localMachineScopeStringEncryptor = new LocalMachineScopeStringEncryptor(new EntropyCreator(), new DataProtectorFactory()));
+          return _encryptForLocalMachineScopeQueryHandler ??
+                 (_encryptForLocalMachineScopeQueryHandler = new ValidationAwareQueryHandler<EncryptForLocalMachineScopeRequest, string>(
+                   new EncryptForLocalMachineScopeRequestValidator(),
+                   new EncryptForLocalMachineScopeQueryHandler(
+                     new LocalMachineScopeStringEncryptor(new EntropyCreator(), new DataProtectorFactory()))));
         }
       }
       internal set {
         lock (Lock) {
           if (value == null) throw new ArgumentNullException("value");
-          _localMachineScopeStringEncryptor = value;
+          _encryptForLocalMachineScopeQueryHandler = value;
         }
       }
     }

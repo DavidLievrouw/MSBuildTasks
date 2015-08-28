@@ -21,19 +21,19 @@ namespace DavidLievrouw.MSBuildTasks {
 
     [Test]
     public void WhenNoInputStringIsGiven_Throws() {
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.Throws<AggregateException>(() => _sut.Execute());
     }
 
     [Test]
     public void WhenEmptyInputStringIsGiven_Throws() {
       _sut.StringToDecrypt = string.Empty;
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.Throws<AggregateException>(() => _sut.Execute());
     }
 
     [Test]
     public void WhenWhitespaceInputStringIsGiven_Throws() {
       _sut.StringToDecrypt = " ";
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+      Assert.Throws<AggregateException>(() => _sut.Execute());
     }
 
     [Test]
@@ -54,7 +54,7 @@ namespace DavidLievrouw.MSBuildTasks {
     [Test]
     public void IgnoresNullEmptyOrWhitespacePurposes() {
       const string expected = "The decrypted string!! $µ£";
-      var encryptedString = ManuallyEncrypt(expected, new[] { "David", "Lievrouw" });
+      var encryptedString = ManuallyEncrypt(expected, new[] {"David", "Lievrouw"});
       _sut.StringToDecrypt = encryptedString;
 
       _sut.Purposes = new[] {"David", null, "Lievrouw", string.Empty, " "};
@@ -70,7 +70,7 @@ namespace DavidLievrouw.MSBuildTasks {
     [Test]
     public void GivenStringWithPurposes_Encrypts() {
       const string expected = "The decrypted string!! $µ£";
-      var encryptedString = ManuallyEncrypt(expected, new[] { "David", "Lievrouw" });
+      var encryptedString = ManuallyEncrypt(expected, new[] {"David", "Lievrouw"});
       _sut.StringToDecrypt = encryptedString;
       _sut.Purposes = new[] {"David", "Lievrouw"};
 

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using DavidLievrouw.Utils.Crypto;
+﻿using DavidLievrouw.MSBuildTasks.Handlers;
+using DavidLievrouw.MSBuildTasks.Handlers.Models;
 using FakeItEasy;
+using FluentValidation;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 
@@ -9,7 +9,7 @@ namespace DavidLievrouw.MSBuildTasks {
   [TestFixture]
   public class EncryptForLocalMachineScopeTests {
     ITaskLogger _taskLogger;
-    ILocalMachineScopeStringEncryptor _localMachineScopeStringEncryptor;
+    IQueryHandler<EncryptForLocalMachineScopeRequest, string> _encryptForLocalMachineScopeQueryHandler;
     EncryptForLocalMachineScope _sut;
 
     [SetUp]
@@ -18,34 +18,35 @@ namespace DavidLievrouw.MSBuildTasks {
 
       _taskLogger = _taskLogger.Fake();
       _sut.Logger = _taskLogger;
-      _localMachineScopeStringEncryptor = _localMachineScopeStringEncryptor.Fake();
-      _sut.LocalMachineScopeStringEncryptor = _localMachineScopeStringEncryptor;
+      _encryptForLocalMachineScopeQueryHandler = _encryptForLocalMachineScopeQueryHandler.Fake();
+      _sut.EncryptForLocalMachineScopeQueryHandler = _encryptForLocalMachineScopeQueryHandler;
     }
 
     [Test]
-    public void WhenNoInputStringIsGiven_Throws() {
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+    public void UsesLocalDefault_WhenNoOverrideOfTheQueryHandlerIsProvided() {
+      var actual = new EncryptForLocalMachineScope().EncryptForLocalMachineScopeQueryHandler;
+      Assert.That(actual, Is.Not.Null);
+      Assert.That(actual, Is.InstanceOf<ValidationAwareQueryHandler<EncryptForLocalMachineScopeRequest, string>>());
     }
 
     [Test]
-    public void WhenEmptyInputStringIsGiven_Throws() {
-      _sut.StringToEncrypt = string.Empty;
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
-    }
-
-    [Test]
-    public void WhenWhitespaceInputStringIsGiven_Throws() {
-      _sut.StringToEncrypt = " ";
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+    public void WhenValidationFails_Throws() {
+      A.CallTo(() => _encryptForLocalMachineScopeQueryHandler.Handle(A<EncryptForLocalMachineScopeRequest>._))
+       .Throws(Models.ValidationException);
+      Assert.Throws<ValidationException>(() => _sut.Execute());
     }
 
     [Test]
     public void EncryptsUserData() {
       _sut.StringToEncrypt = "The string to encrypt!";
       _sut.Purposes = new[] {"My", "Purposes"};
+      var expectedRequest = new EncryptForLocalMachineScopeRequest {
+        StringToEncrypt = _sut.StringToEncrypt,
+        Purposes = _sut.Purposes
+      };
 
       const string expectedResult = "{EncryptedString}";
-      ConfigureLocalMachineScopeStringEncryptor_ToReturn(expectedResult);
+      ConfigureQueryHandler_ToReturn(expectedResult);
 
       var result = _sut.Execute();
       var actual = _sut.EncryptedString;
@@ -53,8 +54,16 @@ namespace DavidLievrouw.MSBuildTasks {
       Assert.That(result, Is.True);
       Assert.That(actual, Is.Not.Null);
       Assert.That(actual, Is.EqualTo(expectedResult));
-      A.CallTo(() => _localMachineScopeStringEncryptor.Encrypt(_sut.StringToEncrypt, _sut.Purposes))
+      A.CallTo(() => _encryptForLocalMachineScopeQueryHandler.Handle(
+        A<EncryptForLocalMachineScopeRequest>.That.Matches(req => req.HasSamePropertyValuesAs(expectedRequest))))
        .MustHaveHappened();
+    }
+
+    [Test]
+    public void GivenNoInputString_LogsOnStart() {
+      _sut.StringToEncrypt = null;
+      _sut.Execute();
+      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypting: [NULL]")).MustHaveHappened();
     }
 
     [Test]
@@ -66,8 +75,8 @@ namespace DavidLievrouw.MSBuildTasks {
       A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Encrypted successfully.")).MustHaveHappened();
     }
 
-    void ConfigureLocalMachineScopeStringEncryptor_ToReturn(string result) {
-      A.CallTo(() => _localMachineScopeStringEncryptor.Encrypt(A<string>._, A<IEnumerable<string>>._))
+    void ConfigureQueryHandler_ToReturn(string result) {
+      A.CallTo(() => _encryptForLocalMachineScopeQueryHandler.Handle(A<EncryptForLocalMachineScopeRequest>._))
        .Returns(result);
     }
   }

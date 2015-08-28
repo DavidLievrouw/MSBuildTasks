@@ -35,6 +35,10 @@
       <HintPath>..\packages\DavidLievrouw.Utils.1.0.0-beta\lib\net451\DLUtils.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.5.6.2.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
@@ -56,6 +60,19 @@
     <Compile Include="DecryptForLocalMachineScope.cs" />
     <Compile Include="EncryptForLocalMachineScope.cs" />
     <Compile Include="GetVersionParts.cs" />
+    <Compile Include="Handlers\DecryptForLocalMachineScopeQueryHandler.cs" />
+    <Compile Include="Handlers\EncryptForLocalMachineScopeQueryHandler.cs" />
+    <Compile Include="Handlers\ICommandHandler.cs" />
+    <Compile Include="Handlers\IQueryHandler.cs" />
+    <Compile Include="Handlers\Models\DecryptForLocalMachineScopeRequest.cs" />
+    <Compile Include="Handlers\Models\EncryptForLocalMachineScopeRequest.cs" />
+    <Compile Include="Handlers\Models\Validation\DecryptForLocalMachineScopeRequestValidator.cs" />
+    <Compile Include="Handlers\Models\Validation\EncryptForLocalMachineScopeRequestValidator.cs" />
+    <Compile Include="Handlers\Models\Validation\IDecryptForLocalMachineScopeRequestValidator.cs" />
+    <Compile Include="Handlers\Models\Validation\IEncryptForLocalMachineScopeRequestValidator.cs" />
+    <Compile Include="Handlers\Models\Validation\NullAllowableValidator.cs" />
+    <Compile Include="Handlers\ValidationAwareCommandHandler.cs" />
+    <Compile Include="Handlers\ValidationAwareQueryHandler.cs" />
     <Compile Include="ITaskLogger.cs" />
     <Compile Include="MSBuildTaskLogger.cs" />
   </ItemGroup>
@@ -67,6 +84,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

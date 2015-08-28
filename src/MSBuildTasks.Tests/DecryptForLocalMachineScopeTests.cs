@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using DavidLievrouw.Utils.Crypto;
+using DavidLievrouw.MSBuildTasks.Handlers;
+using DavidLievrouw.MSBuildTasks.Handlers.Models;
 using FakeItEasy;
+using FluentValidation;
 using Microsoft.Build.Framework;
 using NUnit.Framework;
 
@@ -10,7 +11,7 @@ namespace DavidLievrouw.MSBuildTasks {
   [TestFixture]
   public class DecryptForLocalMachineScopeTests {
     ITaskLogger _taskLogger;
-    ILocalMachineScopeStringEncryptor _localMachineScopeStringEncryptor;
+    IQueryHandler<DecryptForLocalMachineScopeRequest, string> _decryptForLocalMachineScopeQueryHandler;
     DecryptForLocalMachineScope _sut;
 
     [SetUp]
@@ -19,34 +20,35 @@ namespace DavidLievrouw.MSBuildTasks {
 
       _taskLogger = _taskLogger.Fake();
       _sut.Logger = _taskLogger;
-      _localMachineScopeStringEncryptor = _localMachineScopeStringEncryptor.Fake();
-      _sut.LocalMachineScopeStringEncryptor = _localMachineScopeStringEncryptor;
+      _decryptForLocalMachineScopeQueryHandler = _decryptForLocalMachineScopeQueryHandler.Fake();
+      _sut.DecryptForLocalMachineScopeQueryHandler = _decryptForLocalMachineScopeQueryHandler;
     }
 
     [Test]
-    public void WhenNoInputStringIsGiven_Throws() {
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+    public void UsesLocalDefault_WhenNoOverrideOfTheQueryHandlerIsProvided() {
+      var actual = new DecryptForLocalMachineScope().DecryptForLocalMachineScopeQueryHandler;
+      Assert.That(actual, Is.Not.Null);
+      Assert.That(actual, Is.InstanceOf<ValidationAwareQueryHandler<DecryptForLocalMachineScopeRequest, string>>());
     }
 
     [Test]
-    public void WhenEmptyInputStringIsGiven_Throws() {
-      _sut.StringToDecrypt = string.Empty;
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
-    }
-
-    [Test]
-    public void WhenWhitespaceInputStringIsGiven_Throws() {
-      _sut.StringToDecrypt = " ";
-      Assert.Throws<InvalidOperationException>(() => _sut.Execute());
+    public void WhenValidationFails_Throws() {
+      A.CallTo(() => _decryptForLocalMachineScopeQueryHandler.Handle(A<DecryptForLocalMachineScopeRequest>._))
+       .Throws(Models.ValidationException);
+      Assert.Throws<ValidationException>(() => _sut.Execute());
     }
 
     [Test]
     public void DecryptsUserData() {
       _sut.StringToDecrypt = "{EncryptedString}";
       _sut.Purposes = new[] {"My", "Purposes"};
+      var expectedRequest = new DecryptForLocalMachineScopeRequest {
+        StringToDecrypt = _sut.StringToDecrypt,
+        Purposes = _sut.Purposes
+      };
 
       const string expectedResult = "The decrypted string!";
-      ConfigureLocalMachineScopeStringEncryptor_ToReturn(expectedResult);
+      ConfigureQueryHandler_ToReturn(expectedResult);
 
       var result = _sut.Execute();
       var actual = _sut.DecryptedString;
@@ -54,8 +56,16 @@ namespace DavidLievrouw.MSBuildTasks {
       Assert.That(result, Is.True);
       Assert.That(actual, Is.Not.Null);
       Assert.That(actual, Is.EqualTo(expectedResult));
-      A.CallTo(() => _localMachineScopeStringEncryptor.Decrypt(_sut.StringToDecrypt, _sut.Purposes))
+      A.CallTo(() => _decryptForLocalMachineScopeQueryHandler.Handle(
+        A<DecryptForLocalMachineScopeRequest>.That.Matches(req => req.HasSamePropertyValuesAs(expectedRequest))))
        .MustHaveHappened();
+    }
+
+    [Test]
+    public void GivenNoInputString_LogsOnStart() {
+      _sut.StringToDecrypt = null;
+      _sut.Execute();
+      A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Decrypting: [NULL]")).MustHaveHappened();
     }
 
     [Test]
@@ -67,8 +77,8 @@ namespace DavidLievrouw.MSBuildTasks {
       A.CallTo(() => _taskLogger.LogMessage(MessageImportance.High, "Decrypted successfully.")).MustHaveHappened();
     }
 
-    void ConfigureLocalMachineScopeStringEncryptor_ToReturn(string result) {
-      A.CallTo(() => _localMachineScopeStringEncryptor.Decrypt(A<string>._, A<IEnumerable<string>>._))
+    void ConfigureQueryHandler_ToReturn(string result) {
+      A.CallTo(() => _decryptForLocalMachineScopeQueryHandler.Handle(A<DecryptForLocalMachineScopeRequest>._))
        .Returns(result);
     }
   }
